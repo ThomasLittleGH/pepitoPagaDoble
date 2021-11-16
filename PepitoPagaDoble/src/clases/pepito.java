@@ -4,9 +4,6 @@
 package clases;
 
 import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.BorderFactory;
@@ -14,6 +11,7 @@ import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
@@ -35,12 +33,20 @@ public class pepito extends JFrame implements ActionListener {
     private JLabel lblDado1, lblDado2;
     private JRadioButton rdbMenor7, rdbIgual7, rdbMayor7;
     private ButtonGroup btgApuesta;
+    generarNumero objDado;
+    imagenesDados objDadoGif;
+    int dado1;
+    int dado2;
 
     public pepito() {
         initComponentes();
         initTabbedPane();
         initPanelInstrucciones();
+        initJugar();
 
+    }
+
+    private void initJugar() {
         panJugar.add(panDados);
         panJugar.add(panApuesta);
 
@@ -54,12 +60,21 @@ public class pepito extends JFrame implements ActionListener {
         panApuesta.add(rdbMenor7);
         panApuesta.add(rdbIgual7);
         panApuesta.add(rdbMayor7);
-        
+
         rdbMenor7.setText("< 7");
         rdbIgual7.setText("7");
         rdbMayor7.setText("> 7");
+
+        btgApuesta.add(rdbMenor7);
+        btgApuesta.add(rdbIgual7);
+        btgApuesta.add(rdbMayor7);
         panApuesta.setBorder(BorderFactory.createTitledBorder("Apostar"));
-        
+
+        btnTirar.setBounds(70, 100, 70, 50);
+
+        panJugar.add(btnTirar);
+        btnTirar.addActionListener(this);
+
     }
 
     private void initPanelInstrucciones() {
@@ -109,16 +124,17 @@ public class pepito extends JFrame implements ActionListener {
 
     private void initComponentes() {
         // Instanciaciones
+
         panInstrucciones = new JPanel();
         panJugar = new JPanel();
         panDados = new JPanel();
         panApuesta = new JPanel();
         tbdPane = new JTabbedPane();
         scpScroll = new JScrollPane();
-        btnTirar = new JButton("Tirar dado");
+        btnTirar = new JButton("Tirar");
         txaInstrucciones = new JTextArea();
-        lblDado1 = new JLabel();
-        lblDado2 = new JLabel();
+        lblDado1 = new JLabel(" ");
+        lblDado2 = new JLabel(" ");
         rdbMenor7 = new JRadioButton();
         rdbIgual7 = new JRadioButton();
         rdbMayor7 = new JRadioButton();
@@ -147,6 +163,24 @@ public class pepito extends JFrame implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        objDado = new generarNumero();
+        objDadoGif = new imagenesDados();
+        dado1 = objDado.generarNumero();
+        dado2 = objDado.generarNumero();
+        lblDado1.setIcon(objDadoGif.gifDado(dado1));
+        lblDado2.setIcon(objDadoGif.gifDado(dado2));
+        System.out.println(dado1 + " - " + dado2);
+        if ((rdbMenor7.isSelected()) && (dado1 + dado2 < 7)) {
+            JOptionPane.showMessageDialog(null, "gano");
+        }
+        else if ((rdbIgual7.isSelected()) && (dado1 + dado2 == 7)) {
+            JOptionPane.showMessageDialog(null, "gano");
+        }
+        else if ((rdbMayor7.isSelected()) && (dado1 + dado2 > 7)){
+            JOptionPane.showMessageDialog(null, "gano");
+        } else {
+            JOptionPane.showMessageDialog(null, "perdio");
+        }
 
     }
 
