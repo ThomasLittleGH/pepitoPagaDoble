@@ -7,6 +7,7 @@ import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -17,9 +18,9 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
 
 /**
- *
  * @author Thomas Little
  */
 public class pepito extends JFrame implements ActionListener {
@@ -30,10 +31,11 @@ public class pepito extends JFrame implements ActionListener {
     private JScrollPane scpScroll;
     private JPanel panInstrucciones, panJugar, panDados, panApuesta;
     private JTextArea txaInstrucciones;
-    private JLabel lblDado1, lblDado2;
+    private JTextField txfApuesta;
+    private JLabel lblDado1, lblDado2, lblBalance;
     private JRadioButton rdbMenor7, rdbIgual7, rdbMayor7;
     private ButtonGroup btgApuesta;
-    generarNumero objDado;
+    private double balance = 1000;
     imagenesDados objDadoGif;
     int dado1;
     int dado2;
@@ -47,19 +49,28 @@ public class pepito extends JFrame implements ActionListener {
     }
 
     private void initJugar() {
+        BoxLayout bl = new BoxLayout(panJugar, BoxLayout.Y_AXIS);
+
+        panJugar.setLayout(bl);
+        objDadoGif = new imagenesDados();
+
         panJugar.add(panDados);
         panJugar.add(panApuesta);
 
-        panDados.setBackground(Color.red);
+        panJugar.setBackground(Color.gray);
+        panDados.setBackground(Color.gray);
         panDados.add(lblDado1);
         panDados.add(lblDado2);
+        panDados.setBorder(BorderFactory.createTitledBorder("Dados"));
         lblDado1.setSize(93, 93);
         lblDado2.setSize(93, 93);
 
-        panApuesta.setBackground(Color.green);
+        panApuesta.setBackground(Color.lightGray);
         panApuesta.add(rdbMenor7);
         panApuesta.add(rdbIgual7);
         panApuesta.add(rdbMayor7);
+        panApuesta.add(lblBalance);
+        panApuesta.add(txfApuesta);
 
         rdbMenor7.setText("< 7");
         rdbIgual7.setText("7");
@@ -70,9 +81,10 @@ public class pepito extends JFrame implements ActionListener {
         btgApuesta.add(rdbMayor7);
         panApuesta.setBorder(BorderFactory.createTitledBorder("Apostar"));
 
-        btnTirar.setBounds(70, 100, 70, 50);
+        lblDado1.setIcon(objDadoGif.gifDado(1));
+        lblDado2.setIcon(objDadoGif.gifDado(1));
 
-        panJugar.add(btnTirar);
+        panApuesta.add(btnTirar);
         btnTirar.addActionListener(this);
 
     }
@@ -124,7 +136,7 @@ public class pepito extends JFrame implements ActionListener {
 
     private void initComponentes() {
         // Instanciaciones
-
+        txfApuesta = new JTextField("Ingrese apuesta");
         panInstrucciones = new JPanel();
         panJugar = new JPanel();
         panDados = new JPanel();
@@ -135,6 +147,7 @@ public class pepito extends JFrame implements ActionListener {
         txaInstrucciones = new JTextArea();
         lblDado1 = new JLabel(" ");
         lblDado2 = new JLabel(" ");
+        lblBalance = new JLabel("Balance: " + balance);
         rdbMenor7 = new JRadioButton();
         rdbIgual7 = new JRadioButton();
         rdbMayor7 = new JRadioButton();
@@ -163,24 +176,34 @@ public class pepito extends JFrame implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        objDado = new generarNumero();
-        objDadoGif = new imagenesDados();
-        dado1 = objDado.generarNumero();
-        dado2 = objDado.generarNumero();
+        dado1 = objDadoGif.generarNumero();
+        dado2 = objDadoGif.generarNumero();
         lblDado1.setIcon(objDadoGif.gifDado(dado1));
         lblDado2.setIcon(objDadoGif.gifDado(dado2));
-        System.out.println(dado1 + " - " + dado2);
+        balance = balance - Double.parseDouble(txfApuesta.getText());
+
         if ((rdbMenor7.isSelected()) && (dado1 + dado2 < 7)) {
             JOptionPane.showMessageDialog(null, "gano");
+            if (Double.parseDouble(txfApuesta.getText()) > 0 && Double.parseDouble(txfApuesta.getText()) < balance) {
+                balance = balance + (Double.parseDouble(txfApuesta.getText()) * 1.5);
+            }
         }
         else if ((rdbIgual7.isSelected()) && (dado1 + dado2 == 7)) {
             JOptionPane.showMessageDialog(null, "gano");
+            if (Double.parseDouble(txfApuesta.getText()) > 0 && Double.parseDouble(txfApuesta.getText()) < balance) {
+                balance = balance + (Double.parseDouble(txfApuesta.getText()) * 2);
+            }
         }
-        else if ((rdbMayor7.isSelected()) && (dado1 + dado2 > 7)){
+        else if ((rdbMayor7.isSelected()) && (dado1 + dado2 > 7)) {
             JOptionPane.showMessageDialog(null, "gano");
-        } else {
+            if (Double.parseDouble(txfApuesta.getText()) > 0 && Double.parseDouble(txfApuesta.getText()) < balance) {
+                balance = balance + (Double.parseDouble(txfApuesta.getText()) * 1.5);
+            }
+        }
+        else {
             JOptionPane.showMessageDialog(null, "perdio");
         }
+        lblBalance.setText("Balance: " + balance);
 
     }
 

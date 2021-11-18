@@ -3,6 +3,7 @@
  */
 package clases;
 
+import java.util.Random;
 import javax.swing.ImageIcon;
 
 /**
@@ -12,6 +13,12 @@ import javax.swing.ImageIcon;
 public class imagenesDados {
 
     public ImageIcon icono;
+    
+    public int generarNumero() {
+        Random numeroAleatoreo = new Random();
+        return numeroAleatoreo.nextInt(6)+1;
+    }
+    
     public ImageIcon gifDado(int dado) {
         switch (dado) {
             case 1:
